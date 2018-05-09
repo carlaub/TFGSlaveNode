@@ -27,7 +27,7 @@ public class Main {
 				slaveNode.setSNInformation(snInformation);
 			} else {
 				// Error parsing configuration file
-				System.out.println(ErrorConstants.errConfigurationFileParser);
+				System.out.println(ErrorConstants.ERR_CONF_FILE_PARSE);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -8,6 +8,10 @@ package model;
  * Slave node configuration information
  */
 public class SNInformation {
+	private String MMIp;
+	private String defaultFS;
+	private String HDFSWorkingDirectory;
+
 
 	public String getMMIp() {
 		return MMIp;
@@ -17,7 +21,19 @@ public class SNInformation {
 		this.MMIp = MMIp;
 	}
 
-	private String MMIp;
+	public String getDefaultFS() {
+		return defaultFS;
+	}
 
+	public void setDefaultFS(String defaultFS) {
+		this.defaultFS = defaultFS;
+	}
 
+	public String getHDFSWorkingDirectory() {
+		return HDFSWorkingDirectory;
+	}
+
+	public void setHDFSWorkingDirectory(String HDFSWorkingDirectory) {
+		this.HDFSWorkingDirectory = HDFSWorkingDirectory;
+	}
 }

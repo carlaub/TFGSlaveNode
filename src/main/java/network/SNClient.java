@@ -2,6 +2,7 @@ package network;
 
 import application.SlaveNode;
 import constants.GenericConstants;
+import hadoop.HadoopUtils;
 
 import java.io.*;
 import java.net.*;
@@ -57,6 +58,8 @@ public class SNClient {
 				case GenericConstants.PCK_DISCONNECT:
 					// Disconnect from the system
 					// TODO: Disconnect Neo4j DB. Clean
+					HadoopUtils.getInstance().closeResources();
+					System.out.println("Bye!");
 					exit = true;
 					break;
 			}
