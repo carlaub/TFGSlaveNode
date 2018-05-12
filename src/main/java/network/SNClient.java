@@ -1,5 +1,6 @@
 package network;
 
+import adapter.Neo4JImport;
 import application.SlaveNode;
 import constants.GenericConstants;
 import hadoop.HadoopUtils;
@@ -53,6 +54,8 @@ public class SNClient {
 			switch(msgFromServer.getCode()) {
 				case GenericConstants.PCK_CODE_START_DB:
 					// Partitions files have been created and saved in HDFS
+					Neo4JImport neo4JImport = new Neo4JImport();
+					neo4JImport.startPartitionDBImport();
 					break;
 
 				case GenericConstants.PCK_DISCONNECT:
