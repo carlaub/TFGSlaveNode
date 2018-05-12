@@ -23,7 +23,7 @@ public class SNClient {
 	public SNClient() {
 		try {
 			dSocket = new DatagramSocket();
-			ipAdress = InetAddress.getByName("127.0.0.1");
+			ipAdress = InetAddress.getByName(SlaveNode.getInstance().getSNInformation().getMMIp());
 		} catch (SocketException e) {
 			e.printStackTrace();
 		} catch (UnknownHostException e) {
