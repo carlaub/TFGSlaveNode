@@ -98,7 +98,6 @@ public class Neo4JImport {
 		labels = new Label[labelsNum];
 		for (int i = 0; i < labelsNum; i++) {
 			labels[i] = DynamicLabel.label(parts[index]);
-			index++;
 		}
 
 		// TODO: CAMBIAR ID, UTILIZAR INDEX MANAGER  index() (https://neo4j.com/docs/java-reference/current/javadocs/org/neo4j/graphdb/GraphDatabaseService.html#createNode--)
