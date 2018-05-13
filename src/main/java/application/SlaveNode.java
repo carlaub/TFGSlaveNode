@@ -1,6 +1,8 @@
 package application;
 
+import hadoop.HadoopUtils;
 import model.SNInformation;
+import org.neo4j.unsafe.batchinsert.BatchInserter;
 
 /**
  * Created by Carla Urrea Blázquez on 04/05/2018.
@@ -13,6 +15,7 @@ public class SlaveNode {
 	private static SlaveNode instance;
 	private SNInformation SNInformation;
 	private int id;
+	private BatchInserter batchInserter;
 
 	public static SlaveNode getInstance() {
 		if (instance == null) {
@@ -40,5 +43,23 @@ public class SlaveNode {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public BatchInserter getBatchInserter() {
+		return batchInserter;
+	}
+
+	public void setBatchInserter(BatchInserter batchInserter) {
+		this.batchInserter = batchInserter;
+	}
+
+	public void shutDownSlaveNode() {
+		// TODO: Disconnect Neo4j DB. Clean
+		//Clean Hadoop
+		HadoopUtils.getInstance().closeResources();
+		// Shutdown Neo4J BatchInserter
+		if (SlaveNode.getInstance().getBatchInserter() != null) {
+			SlaveNode.getInstance().getBatchInserter().shutdown();
+		}
 	}
 }

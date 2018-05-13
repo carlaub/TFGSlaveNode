@@ -12,4 +12,5 @@ public class ErrorConstants {
 	// Neo4j Import
 	public static final String ERR_PARSE_NODE_PARTITION_FILE = "[ERROR] Error reading node partition file from HDFS";
 	public static final String ERR_PARSE_EDGE_PARTITION_FILE = "[ERROR] Error reading edge partition file from HDFS";
+	public static final String ERR_INIT_BATCHINSERTER = "[ERROR] Error initializing Neo4j Batchinserter";
 }

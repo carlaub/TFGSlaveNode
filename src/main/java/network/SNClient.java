@@ -60,8 +60,7 @@ public class SNClient {
 
 				case GenericConstants.PCK_DISCONNECT:
 					// Disconnect from the system
-					// TODO: Disconnect Neo4j DB. Clean
-					HadoopUtils.getInstance().closeResources();
+					SlaveNode.getInstance().shutDownSlaveNode();
 					System.out.println("Bye!");
 					exit = true;
 					break;
