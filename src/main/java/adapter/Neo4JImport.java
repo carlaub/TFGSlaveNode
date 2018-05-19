@@ -78,13 +78,18 @@ public class Neo4JImport {
 	 */
 	private boolean createNode(String line) {
 		int labelsNum;
-		int attrNum;
 		int index = 0;
 		int id;
 		long neo4jId;
 		Label[] labels;
 
 		String[] parts = line.split("\t");
+
+		// DEBUG
+		for(String part : parts) {
+			System.out.println("PART: " + part);
+		}
+
 		int totalParts = parts.length;
 
 		Map<String, Object> properties = new HashMap<String, Object>();
@@ -98,6 +103,7 @@ public class Neo4JImport {
 		labels = new Label[labelsNum];
 		for (int i = 0; i < labelsNum; i++) {
 			labels[i] = DynamicLabel.label(parts[index]);
+			index++;
 		}
 
 		// TODO: CAMBIAR ID, UTILIZAR INDEX MANAGER  index() (https://neo4j.com/docs/java-reference/current/javadocs/org/neo4j/graphdb/GraphDatabaseService.html#createNode--)
