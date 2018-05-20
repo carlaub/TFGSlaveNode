@@ -58,8 +58,8 @@ public class SlaveNode {
 		//Clean Hadoop
 		HadoopUtils.getInstance().closeResources();
 		// Shutdown Neo4J BatchInserter
-		if (SlaveNode.getInstance().getBatchInserter() != null) {
+		/*if (SlaveNode.getInstance().getBatchInserter() != null) {
 			SlaveNode.getInstance().getBatchInserter().shutdown();
-		}
+		}*/
 	}
 }

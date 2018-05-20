@@ -47,10 +47,13 @@ public class Neo4JImport {
 		}
 
 		// Process partition file of edges
-		if (!processEdgesPartitionFile()) {
+		/*if (!processEdgesPartitionFile()) {
 			System.out.println(ErrorConstants.ERR_PARSE_NODE_PARTITION_FILE);
 			return false;
-		}
+		}*/
+
+		batchInserter.shutdown();
+
 
 		return true;
 	}
