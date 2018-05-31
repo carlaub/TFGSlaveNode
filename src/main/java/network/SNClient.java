@@ -1,9 +1,9 @@
 package network;
 
-import adapter.Neo4JImport;
+import neo4j.GraphDatabase;
+import neo4j.Neo4JImport;
 import application.SlaveNode;
 import constants.GenericConstants;
-import hadoop.HadoopUtils;
 
 import java.io.*;
 import java.net.*;
@@ -61,6 +61,7 @@ public class SNClient {
 				case GenericConstants.PCK_DISCONNECT:
 					// Disconnect from the system
 					SlaveNode.getInstance().shutDownSlaveNode();
+					GraphDatabase.getInstance().shutdown();
 					System.out.println("Bye!");
 					exit = true;
 					break;

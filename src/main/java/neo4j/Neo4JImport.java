@@ -1,19 +1,13 @@
-package adapter;
+package neo4j;
 
 import application.SlaveNode;
 import constants.ErrorConstants;
 import constants.GenericConstants;
+import constants.MsgConstants;
 import hadoop.HadoopUtils;
-
-import org.neo4j.unsafe.batchinsert.BatchInserter;
-import org.neo4j.unsafe.batchinsert.BatchInserters;
-import org.neo4j.graphdb.Label;
-import org.neo4j.graphdb.DynamicLabel;
-import org.neo4j.graphdb.RelationshipType;
-import org.neo4j.graphdb.DynamicRelationshipType;
+import org.neo4j.graphdb.*;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,11 +21,12 @@ import java.util.Map;
  * The finality is interpret the partition files stored in HDFS, parse it and create the Neo4J DB for this partition
  */
 public class Neo4JImport {
-	private BatchInserter batchInserter;
-	Map<Integer, Long> nodeCache;
+	private GraphDatabaseService graphDb;
+	Map<Integer, Node> nodeCache;
+
 
 	public Neo4JImport() {
-		nodeCache = new HashMap<Integer, Long>();
+		nodeCache = new HashMap<>();
 	}
 
 	public boolean startPartitionDBImport() {
@@ -47,30 +42,19 @@ public class Neo4JImport {
 		}
 
 		// Process partition file of edges
-		/*if (!processEdgesPartitionFile()) {
+		if (!processEdgesPartitionFile()) {
 			System.out.println(ErrorConstants.ERR_PARSE_NODE_PARTITION_FILE);
 			return false;
-		}*/
+		}
 
-		batchInserter.shutdown();
-
+		System.out.println(MsgConstants.MSG_FIN_IMPORT_NEO4J);
 
 		return true;
 	}
 
 	private boolean initBatchInserter() {
-		try {
-			//NEO4J BATCHINSERTER Configuration
-			batchInserter = BatchInserters.inserter(new File(SlaveNode.getInstance().getSNInformation().getNeo4jDBPath()));
-			if (batchInserter != null) {
-				SlaveNode.getInstance().setBatchInserter(batchInserter);
-				return true;
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return false;
+		graphDb = GraphDatabase.getInstance().getDataBaseGraphService();
+		return graphDb != null;
 	}
 
 	/**
@@ -79,11 +63,10 @@ public class Neo4JImport {
 	 * @param line
 	 * @return
 	 */
-	private boolean createNode(String line) {
+	private void createNode(String line) {
 		int labelsNum;
 		int index = 0;
 		int id;
-		long neo4jId;
 		Label[] labels;
 
 		String[] parts = line.split("\t");
@@ -116,12 +99,19 @@ public class Neo4JImport {
 			index += 2;
 		}
 
-		neo4jId = batchInserter.createNode(properties, labels);
-		if (neo4jId >= 0) {
-			nodeCache.put(id, neo4jId);
-			return true;
+		Node n;
+
+		try ( Transaction tx = graphDb.beginTx() ) {
+			// Database operations go here
+			n = graphDb.createNode(labels);
+
+			for (Map.Entry<String, Object> entry : properties.entrySet()) {
+				n.setProperty(entry.getKey(), entry.getValue());
+			}
+			nodeCache.put(id, n);
+
+			tx.success();
 		}
-		return false;
 	}
 
 	private boolean processNodesPartitionFile() {
@@ -130,7 +120,7 @@ public class Neo4JImport {
 
 		if (br == null) return false;
 
-		System.out.println("READING FILE: " + GenericConstants.FILE_NAME_NODES_PARTITION_BASE + SlaveNode.getInstance().getId() + "\n\n");
+		System.out.println(MsgConstants.MSG_READING_FILE+": " + GenericConstants.FILE_NAME_NODES_PARTITION_BASE + SlaveNode.getInstance().getId() + "\n\n");
 		try {
 			while((line = br.readLine()) != null) {
 				System.out.println(line);
@@ -146,7 +136,6 @@ public class Neo4JImport {
 	}
 
 	private void createRelation(String line) {
-		int index = 0;
 		int fromNode;
 		int toNode;
 
@@ -165,8 +154,17 @@ public class Neo4JImport {
 			properties.put(parts[i], parts[i + 1]);
 		}
 
-		// Relationship properties processing
-		batchInserter.createRelationship(nodeCache.get(fromNode), nodeCache.get(toNode), type, properties);
+		try ( Transaction tx = graphDb.beginTx() ) {
+			// Relationship properties processing
+			Relationship relationShip;
+			relationShip = nodeCache.get(fromNode).createRelationshipTo(nodeCache.get(toNode), type);
+
+			for (Map.Entry<String, Object> entry : properties.entrySet()) {
+				relationShip.setProperty(entry.getKey(), entry.getValue());
+			}
+
+			tx.success();
+		}
 	}
 
 	private boolean processEdgesPartitionFile() {
