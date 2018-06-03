@@ -23,7 +23,7 @@ public class GraphDatabase {
 	}
 
 	private GraphDatabase() {
-		this.graphDatabaseService = new GraphDatabaseFactory().newEmbeddedDatabase(new File(SlaveNode.getInstance().getSNInformation().getNeo4jDBPath() + "test.db"));
+		this.graphDatabaseService = new GraphDatabaseFactory().newEmbeddedDatabase(new File(SlaveNode.getInstance().getSNInformation().getNeo4jDBPath()));
 		if (graphDatabaseService != null) {
 			registerShutdownHook(this.graphDatabaseService);
 		}
