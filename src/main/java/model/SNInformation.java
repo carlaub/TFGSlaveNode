@@ -9,6 +9,7 @@ package model;
  */
 public class SNInformation {
 	private String MMIp;
+	private int MMPort;
 	private String defaultFS;
 	private String HDFSWorkingDirectory;
 	private String neo4jDBPath;
@@ -44,5 +45,13 @@ public class SNInformation {
 
 	public void setNeo4jDBPath(String neo4jDBPath) {
 		this.neo4jDBPath = neo4jDBPath;
+	}
+
+	public int getMMPort() {
+		return MMPort;
+	}
+
+	public void setMMPort(int MMPort) {
+		this.MMPort = MMPort;
 	}
 }

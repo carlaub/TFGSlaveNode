@@ -4,24 +4,28 @@ import neo4j.GraphDatabase;
 import neo4j.Neo4JImport;
 import application.SlaveNode;
 import constants.GenericConstants;
+import neo4j.QueryExecutor;
 
 import java.io.*;
 import java.net.*;
 
 /**
  * Created by Carla Urrea Blázquez on 05/05/2018.
- *
+ * <p>
  * SNClient.java
- *
+ * <p>
  * Class that manage the communication with the server
  */
 public class SNClient {
-	DatagramPacket dPacket;
-	DatagramSocket dSocket;
-	InetAddress ipAdress;
+	private final int MMPort;
+	private DatagramPacket dPacket;
+	private DatagramSocket dSocket;
+	private InetAddress ipAdress;
 	byte[] buff;
 
 	public SNClient() {
+		MMPort = SlaveNode.getInstance().getSNInformation().getMMPort();
+
 		try {
 			dSocket = new DatagramSocket();
 			ipAdress = InetAddress.getByName(SlaveNode.getInstance().getSNInformation().getMMIp());
@@ -34,12 +38,11 @@ public class SNClient {
 
 	/**
 	 * This function implements the communication protocol with the MM.
-	 *
+	 * <p>
 	 * First of all, SlaveNode send a initial packet to the server. Server responds with the ID assigned to this SlaveNode.
 	 * Second, the slave node wait for establish the DB, with the partition assigned to it. The slave node responds with the status
 	 * of the process.
 	 * If all is correct, the node will waiting until a query arrives.
-	 *
 	 */
 	public void startCommunication() {
 		Msg msgFromServer;
@@ -51,48 +54,42 @@ public class SNClient {
 		while (!exit) {
 			msgFromServer = waitFromServer();
 
-			switch(msgFromServer.getCode()) {
-				case GenericConstants.PCK_CODE_START_DB:
+			switch (msgFromServer.getCode()) {
+				case NetworkConstants.PCK_CODE_START_DB:
 					// Partitions files have been created and saved in HDFS
 					Neo4JImport neo4JImport = new Neo4JImport();
 					neo4JImport.startPartitionDBImport();
 					break;
 
-				case GenericConstants.PCK_DISCONNECT:
+				case NetworkConstants.PCK_DISCONNECT:
 					// Disconnect from the system
 					SlaveNode.getInstance().shutDownSlaveNode();
 					GraphDatabase.getInstance().shutdown();
 					System.out.println("Bye!");
 					exit = true;
 					break;
+
+				case NetworkConstants.PCK_QUERY:
+					System.out.println("NEW QUERY RECEIVED");
+					QueryExecutor.getInstace().processQuery(msgFromServer.getDataAsString());
+
+					sendPacketToServer(new Msg(NetworkConstants.PCK_QUERY_RESULT, null));
+					break;
 			}
 		}
-
 	}
 
-	public void connectToServer() {
+	private void connectToServer() {
 
-		try {
-			Msg msg = new Msg(12, "Hello");
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			ObjectOutputStream oos = new ObjectOutputStream(baos);
-			oos.writeObject(msg);
-			byte[] data = baos.toByteArray();
+		Msg msg = new Msg(12, "Hello");
+		sendPacketToServer(msg);
 
-			dPacket = new DatagramPacket(data, data.length, ipAdress, 3456);
-
-			dSocket.send(dPacket);
-
-			// Server send the ID assigned to this node
-			Msg response = waitFromServer();
-			SlaveNode.getInstance().setId(Integer.valueOf(response.getData()));
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		// Server send the ID assigned to this node
+		Msg response = waitFromServer();
+		SlaveNode.getInstance().setId(Integer.valueOf(response.getDataAsString()));
 	}
 
-	public Msg waitFromServer() {
+	private Msg waitFromServer() {
 		Msg msg = null;
 		try {
 			byte[] dataIncome = new byte[65535];
@@ -104,14 +101,30 @@ public class SNClient {
 
 			msg = (Msg) ois.readObject();
 			System.out.println("New Message!");
-			System.out.println("Code: " + msg.getCode() + "  Data: " + msg.getData()) ;
+			System.out.println("Code: " + msg.getCode() + "  Data: " + msg.getDataAsString());
 
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
+		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 
 		return msg;
+	}
+
+
+	private void sendPacketToServer(Msg msg) {
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ObjectOutputStream oos;
+
+			oos = new ObjectOutputStream(baos);
+			oos.writeObject(msg);
+			byte[] data = baos.toByteArray();
+
+			dPacket = new DatagramPacket(data, data.length, ipAdress, MMPort);
+			dSocket.send(dPacket);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

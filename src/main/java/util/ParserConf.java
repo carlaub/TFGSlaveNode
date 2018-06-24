@@ -35,6 +35,9 @@ public class ParserConf {
 		// Read MetadataManager's IP
 		snInformation.setMMIp(brConfigFile.readLine());
 
+		// Read MetadataManager's connection port
+		snInformation.setMMPort(Integer.valueOf(brConfigFile.readLine()));
+
 		// Read defaul HDFS FS
 		snInformation.setDefaultFS(brConfigFile.readLine());
 
