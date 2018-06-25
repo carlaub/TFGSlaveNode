@@ -3,7 +3,10 @@ package neo4j;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
+import org.w3c.dom.ls.LSInput;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,16 +27,21 @@ public class QueryExecutor {
 		graphDatabaseService = GraphDatabase.getInstance().getDataBaseGraphService();
 	}
 
-	public Result processQuery(String query) {
+	public List<Map<String, Object>> processQuery(String query) {
 		try (Transaction q = graphDatabaseService.beginTx();
 			 Result result = graphDatabaseService.execute(query)) {
-//			System.out.println(result.resultAsString());
+			System.out.println(result.resultAsString());
 
+			List<Map<String, Object>> list = new ArrayList<>();
+
+			while (result.hasNext()) {
+				list.add(result.next());
+			}
 
 			// Important to avoid unwanted behaviour, such as leaking transactions
-//			result.close();
+			result.close();
 
-			return result;
+			return list;
 		}
 	}
 }
