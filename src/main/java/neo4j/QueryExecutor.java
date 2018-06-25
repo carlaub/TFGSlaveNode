@@ -22,13 +22,15 @@ public class QueryExecutor {
 		graphDatabaseService = GraphDatabase.getInstance().getDataBaseGraphService();
 	}
 
-	public void processQuery(String query) {
+	public Result processQuery(String query) {
 		try (Transaction q = graphDatabaseService.beginTx();
 			 Result result = graphDatabaseService.execute(query)) {
 			System.out.println(result.resultAsString());
 
 			// Important to avoid unwanted behaviour, such as leaking transactions
 			result.close();
+
+			return result;
 		}
 	}
 }
