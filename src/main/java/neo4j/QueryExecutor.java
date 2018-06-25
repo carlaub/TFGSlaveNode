@@ -4,6 +4,8 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 
+import java.util.Map;
+
 /**
  * Created by Carla Urrea Blázquez on 06/06/2018.
  *
@@ -25,10 +27,11 @@ public class QueryExecutor {
 	public Result processQuery(String query) {
 		try (Transaction q = graphDatabaseService.beginTx();
 			 Result result = graphDatabaseService.execute(query)) {
-			System.out.println(result.resultAsString());
+//			System.out.println(result.resultAsString());
+
 
 			// Important to avoid unwanted behaviour, such as leaking transactions
-			result.close();
+//			result.close();
 
 			return result;
 		}

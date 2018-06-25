@@ -9,6 +9,7 @@ import org.neo4j.graphdb.Result;
 
 import java.io.*;
 import java.net.*;
+import java.util.Map;
 
 /**
  * Created by Carla Urrea Blázquez on 05/05/2018.
@@ -73,7 +74,9 @@ public class SNClient {
 				case NetworkConstants.PCK_QUERY:
 					System.out.println("NEW QUERY RECEIVED");
 					Result result = QueryExecutor.getInstace().processQuery(msgFromServer.getDataAsString());
-					sendPacketToServer(new Msg(NetworkConstants.PCK_QUERY_RESULT, result));
+					Map<String, Object> row = result.next();
+
+					sendPacketToServer(new Msg(NetworkConstants.PCK_QUERY_RESULT, row));
 
 					break;
 			}
