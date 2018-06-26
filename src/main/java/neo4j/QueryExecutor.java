@@ -1,9 +1,6 @@
 package neo4j;
 
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Result;
-import org.neo4j.graphdb.Transaction;
-import org.w3c.dom.ls.LSInput;
+import org.neo4j.graphdb.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,15 +24,45 @@ public class QueryExecutor {
 		graphDatabaseService = GraphDatabase.getInstance().getDataBaseGraphService();
 	}
 
-	public List<Map<String, Object>> processQuery(String query) {
+	public List<ResultEntity> processQuery(String query) {
 		try (Transaction q = graphDatabaseService.beginTx();
 			 Result result = graphDatabaseService.execute(query)) {
 			System.out.println(result.resultAsString());
 
-			List<Map<String, Object>> list = new ArrayList<>();
+			List<ResultEntity> list = new ArrayList<>();
+
 			System.out.println("HAS NEXT: " + result.hasNext());
+
 			while (result.hasNext()) {
-				list.add(result.next());
+
+				Node node = (Node)result.next().get("n");
+				if (node != null) {
+					ResultNode resultNode = new ResultNode();
+
+					Iterable<String> properties = node.getPropertyKeys();
+					Iterable<Label> labels = node.getLabels();
+
+					for (String propertyKey : properties) resultNode.addProperty(propertyKey, node.getProperty(propertyKey));
+
+					for (Label label : labels) resultNode.addLabel(label.name());
+
+					list.add(resultNode);
+				} else {
+					// Is Relation
+					Relationship relationship = (Relationship) result.next().get("r");
+
+					if (relationship != null) {
+						ResultRelation resultRelation = new ResultRelation();
+
+						Iterable<String> properties = relationship.getPropertyKeys();
+
+						for (String propertyKey : properties) {
+							resultRelation.addProperty(propertyKey, relationship.getProperty(propertyKey));
+						}
+
+						list.add(resultRelation);
+					}
+				}
 			}
 
 			// Important to avoid unwanted behaviour, such as leaking transactions
