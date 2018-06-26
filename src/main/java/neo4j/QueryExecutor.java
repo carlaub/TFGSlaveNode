@@ -27,7 +27,7 @@ public class QueryExecutor {
 	public List<ResultEntity> processQuery(String query) {
 		try (Transaction q = graphDatabaseService.beginTx();
 			 Result result = graphDatabaseService.execute(query)) {
-			System.out.println(result.resultAsString());
+//			System.out.println(result.resultAsString());
 
 			List<ResultEntity> list = new ArrayList<>();
 
