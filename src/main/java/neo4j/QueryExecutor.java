@@ -27,6 +27,7 @@ public class QueryExecutor {
 	public List<ResultEntity> processQuery(String query) {
 		try (Transaction q = graphDatabaseService.beginTx();
 			 Result result = graphDatabaseService.execute(query)) {
+
 //			System.out.println(result.resultAsString());
 
 			List<ResultEntity> list = new ArrayList<>();
@@ -50,7 +51,6 @@ public class QueryExecutor {
 				} else {
 					// Is Relation
 					Relationship relationship = (Relationship) result.next().get("r");
-
 					if (relationship != null) {
 						ResultRelation resultRelation = new ResultRelation();
 
@@ -59,6 +59,9 @@ public class QueryExecutor {
 						for (String propertyKey : properties) {
 							resultRelation.addProperty(propertyKey, relationship.getProperty(propertyKey));
 						}
+
+						resultRelation.setStartNodeId(relationship.getStartNodeId());
+						resultRelation.setEndNodeId(relationship.getEndNodeId());
 
 						list.add(resultRelation);
 					}
