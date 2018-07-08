@@ -8,4 +8,7 @@ package constants;
 public class GenericConstants {
 	public static final String FILE_NAME_NODES_PARTITION_BASE = "nodes_part_";
 	public static final String FILE_NAME_EDGES_PARTITION_BASE = "edges_part_";
+
+	// Border node property
+	public static final String BORDER_NODE_LABEL = "border";
 }
