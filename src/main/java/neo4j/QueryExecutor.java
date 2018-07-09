@@ -35,8 +35,9 @@ public class QueryExecutor {
 			System.out.println("HAS NEXT: " + result.hasNext());
 
 			while (result.hasNext()) {
+				Map<String, Object> next = result.next();
 
-				Node node = (Node)result.next().get("n");
+				Node node = (Node)next.get("n");
 				if (node != null) {
 					ResultNode resultNode = new ResultNode();
 
@@ -50,7 +51,8 @@ public class QueryExecutor {
 					list.add(resultNode);
 				} else {
 					// Is Relation
-					Relationship relationship = (Relationship) result.next().get("r");
+					System.out.println("Is relation??");
+					Relationship relationship = (Relationship) next.get("r");
 					if (relationship != null) {
 						ResultRelation resultRelation = new ResultRelation();
 
