@@ -33,6 +33,7 @@ public class QueryExecutor {
 			List<ResultEntity> list = new ArrayList<>();
 
 			System.out.println("HAS NEXT: " + result.hasNext());
+			System.out.println("Columnas: " + result.columns().size());
 
 			while (result.hasNext()) {
 				Map<String, Object> next = result.next();
