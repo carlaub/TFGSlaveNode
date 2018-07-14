@@ -1,11 +1,8 @@
 package network;
 
-import neo4j.GraphDatabase;
-import neo4j.Neo4JImport;
+import neo4j.*;
 import application.SlaveNode;
 import constants.GenericConstants;
-import neo4j.QueryExecutor;
-import neo4j.ResultEntity;
 import org.neo4j.graphdb.Result;
 
 import java.io.*;
@@ -75,7 +72,7 @@ public class SNClient {
 
 				case NetworkConstants.PCK_QUERY:
 					System.out.println("NEW QUERY RECEIVED");
-					List<ResultEntity> result = QueryExecutor.getInstace().processQuery(msgFromServer.getDataAsString());
+					ResultQuery result = QueryExecutor.getInstace().processQuery(msgFromServer.getDataAsString());
 
 					sendPacketToServer(new Msg(NetworkConstants.PCK_QUERY_RESULT, result));
 

@@ -2,7 +2,6 @@ package neo4j;
 
 import org.neo4j.graphdb.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,37 +23,40 @@ public class QueryExecutor {
 		graphDatabaseService = GraphDatabase.getInstance().getDataBaseGraphService();
 	}
 
-	public List<ResultEntity> processQuery(String query) {
+	public ResultQuery processQuery(String query) {
 		try (Transaction q = graphDatabaseService.beginTx();
 			 Result result = graphDatabaseService.execute(query)) {
 
-//			System.out.println(result.resultAsString());
-
-			List<ResultEntity> list = new ArrayList<>();
-
-			System.out.println("HAS NEXT: " + result.hasNext());
-			System.out.println("Columnas: " + result.columns().size());
+			List<String> columnNames = result.columns();
+			int columnsCount = columnNames.size();
+			ResultQuery resultQuery = new ResultQuery(result.columns());
 
 			while (result.hasNext()) {
 				Map<String, Object> next = result.next();
 
-				Node node = (Node)next.get("n");
-				if (node != null) {
-					ResultNode resultNode = new ResultNode();
+				for (int i = 0; i < columnsCount; i++) {
+					Object o = next.get(resultQuery.getColumnsName()[i]);
 
-					Iterable<String> properties = node.getPropertyKeys();
-					Iterable<Label> labels = node.getLabels();
+					if (o instanceof Node) {
+						Node node = (Node) o;
 
-					for (String propertyKey : properties) resultNode.addProperty(propertyKey, node.getProperty(propertyKey));
+						ResultNode resultNode = new ResultNode();
 
-					for (Label label : labels) resultNode.addLabel(label.name());
+						Iterable<String> properties = node.getPropertyKeys();
+						Iterable<Label> labels = node.getLabels();
 
-					list.add(resultNode);
-				} else {
-					// Is Relation
-					System.out.println("Is relation??");
-					Relationship relationship = (Relationship) next.get("r");
-					if (relationship != null) {
+						for (String propertyKey : properties)
+							resultNode.addProperty(propertyKey, node.getProperty(propertyKey));
+
+						for (Label label : labels) resultNode.addLabel(label.name());
+
+						resultQuery.addEntity(i, resultNode);
+
+
+					} else if (o instanceof Relationship) {
+						// Is Relation
+						System.out.println("Is relation??");
+						Relationship relationship = (Relationship) o;
 						ResultRelation resultRelation = new ResultRelation();
 
 						Iterable<String> properties = relationship.getPropertyKeys();
@@ -66,7 +68,8 @@ public class QueryExecutor {
 						resultRelation.setStartNodeId(relationship.getStartNodeId());
 						resultRelation.setEndNodeId(relationship.getEndNodeId());
 
-						list.add(resultRelation);
+						resultQuery.addEntity(i, resultRelation);
+
 					}
 				}
 			}
@@ -74,7 +77,7 @@ public class QueryExecutor {
 			// Important to avoid unwanted behaviour, such as leaking transactions
 			result.close();
 
-			return list;
+			return resultQuery;
 		}
 	}
 }
