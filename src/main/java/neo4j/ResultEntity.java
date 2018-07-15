@@ -6,11 +6,13 @@ import java.util.HashMap;
 /**
  * Created by Carla Urrea Blázquez on 25/06/2018.
  *
- * ResultEntity.java
- * ResultEntity parent class.
+ * QSEntity.java
+ * QSEntity parent class.
  */
-public class ResultEntity implements Serializable {
-	private HashMap<String, Object> properties;
+public abstract class ResultEntity implements Serializable {
+	protected HashMap<String, Object> properties;
+
+	public abstract String toString();
 
 	public ResultEntity() {
 		this.properties = new HashMap<>();
@@ -27,4 +29,5 @@ public class ResultEntity implements Serializable {
 	public void setProperties(HashMap<String, Object> properties) {
 		this.properties = properties;
 	}
+
 }
