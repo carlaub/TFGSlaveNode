@@ -102,25 +102,28 @@ public class Neo4JImport {
 
 		// TODO: CAMBIAR ID, UTILIZAR INDEX MANAGER  index() (https://neo4j.com/docs/java-reference/current/javadocs/org/neo4j/graphdb/GraphDatabaseService.html#createNode--)
 		// Attributes processing
+		String property;
+		String value;
 		while(index < totalParts) {
-			properties.put(parts[index], parts[index + 1]);
+			property = parts[index];
+			value = parts[index + 1];
+
+			if (StringUtils.isNumeric(value)) {
+				properties.put(property, Integer.valueOf(value));
+			} else {
+				properties.put(property, value);
+			}
 			index += 2;
 		}
 
 		Node n;
-		String strValue;
 
 		try ( Transaction tx = graphDb.beginTx() ) {
 			// Database operations go here
 			n = graphDb.createNode(labels);
 
 			for (Map.Entry<String, Object> entry : properties.entrySet()) {
-				strValue = (String)entry.getValue();
-				if (StringUtils.isNumeric(strValue)) {
-					n.setProperty(entry.getKey(), Integer.valueOf(strValue));
-				} else {
-					n.setProperty(entry.getKey(), strValue);
-				}
+				n.setProperty(entry.getKey(), entry.getValue());
 			}
 			nodeCache.put(id, n);
 
