@@ -33,6 +33,7 @@ public class HadoopUtils {
 		//Required by Maven
 		configuration.set("fs.hdfs.impl", org.apache.hadoop.hdfs.DistributedFileSystem.class.getName());
 		configuration.set("fs.file.impl", org.apache.hadoop.fs.LocalFileSystem.class.getName());
+		configuration.set("dfs.replication", "1");
 
 		configuration.set("fs.defaultFS", SlaveNode.getInstance().getSNInformation().getDefaultFS());
 		try {
