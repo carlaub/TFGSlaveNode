@@ -56,7 +56,7 @@ public class SlaveNode {
 	public void shutDownSlaveNode() {
 		// TODO: Disconnect Neo4j DB. Clean
 		//Clean Hadoop
-		HadoopUtils.getInstance().closeResources();
+//		HadoopUtils.getInstance().closeResources();
 		// Shutdown Neo4J BatchInserter
 		/*if (SlaveNode.getInstance().getBatchInserter() != null) {
 			SlaveNode.getInstance().getBatchInserter().shutdown();

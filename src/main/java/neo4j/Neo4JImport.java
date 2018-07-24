@@ -57,6 +57,8 @@ public class Neo4JImport {
 
 		System.out.println(MsgConstants.MSG_FIN_IMPORT_NEO4J);
 
+		HadoopUtils.getInstance().closeResources();
+
 		return true;
 	}
 
