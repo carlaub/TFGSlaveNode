@@ -75,6 +75,8 @@ public class QueryExecutor {
 				}
 			}
 
+			q.success();
+
 			// Important to avoid unwanted behaviour, such as leaking transactions
 			result.close();
 
