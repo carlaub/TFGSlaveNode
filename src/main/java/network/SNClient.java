@@ -59,7 +59,11 @@ public class SNClient {
 				case NetworkConstants.PCK_CODE_START_DB:
 					// Partitions files have been created and saved in HDFS
 					Neo4JImport neo4JImport = new Neo4JImport();
-					neo4JImport.startPartitionDBImport();
+					if (neo4JImport.startPartitionDBImport()) {
+						sendPacketToServer(new Msg(NetworkConstants.PCK_STATUS_OK_START_DB, null));
+					} else {
+						sendPacketToServer(new Msg(NetworkConstants.PCK_STATUS_KO_START_DB, null));
+					}
 					break;
 
 				case NetworkConstants.PCK_DISCONNECT:
