@@ -64,6 +64,10 @@ public class SNClient {
 					} else {
 						sendPacketToServer(new Msg(NetworkConstants.PCK_STATUS_KO_START_DB, null));
 					}
+
+					System.out.println("My prueba");
+
+					QueryExecutor.getInstace().processQuery("MATCH (n{id: 5}) RETURN n.name;");
 					break;
 
 				case NetworkConstants.PCK_DISCONNECT:
