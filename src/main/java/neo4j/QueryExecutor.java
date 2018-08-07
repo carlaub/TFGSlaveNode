@@ -34,10 +34,10 @@ public class QueryExecutor {
 			while (result.hasNext()) {
 				Map<String, Object> next = result.next();
 
-				System.out.println("-> Class next: " + next.getClass().toString());
-
 				for (int i = 0; i < columnsCount; i++) {
 					Object o = next.get(resultQuery.getColumnsName().get(i));
+					System.out.println("-> Class o: " + o.getClass().toString());
+
 
 					if (o instanceof Node) {
 						Node node = (Node) o;
