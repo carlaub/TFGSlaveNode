@@ -34,6 +34,8 @@ public class QueryExecutor {
 			while (result.hasNext()) {
 				Map<String, Object> next = result.next();
 
+				System.out.println("-> Class next: " + next.getClass().toString());
+
 				for (int i = 0; i < columnsCount; i++) {
 					Object o = next.get(resultQuery.getColumnsName().get(i));
 
@@ -76,6 +78,8 @@ public class QueryExecutor {
 			}
 
 			q.success();
+
+			if (resultQuery.getColumn(0) != null) System.out.println("Size col 0: " + resultQuery.getColumn(0).size());
 
 			// Important to avoid unwanted behaviour, such as leaking transactions
 			result.close();
