@@ -1,28 +1,23 @@
 package network;
 
-import neo4j.*;
 import application.SlaveNode;
-import constants.GenericConstants;
-import org.neo4j.graphdb.Result;
+import neo4j.GraphDatabase;
+import neo4j.Neo4JImport;
+import neo4j.QueryExecutor;
+import neo4j.ResultQuery;
 
 import java.io.*;
 import java.net.*;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Carla Urrea Blázquez on 05/05/2018.
- * <p>
- * SNClient.java
- * <p>
+ *
  * Class that manage the communication with the server
  */
 public class SNClient {
 	private final int MMPort;
-	private DatagramPacket dPacket;
 	private DatagramSocket dSocket;
 	private InetAddress ipAdress;
-	byte[] buff;
 
 	public SNClient() {
 		MMPort = SlaveNode.getInstance().getSNInformation().getMMPort();
@@ -30,16 +25,14 @@ public class SNClient {
 		try {
 			dSocket = new DatagramSocket();
 			ipAdress = InetAddress.getByName(SlaveNode.getInstance().getSNInformation().getMMIp());
-		} catch (SocketException e) {
-			e.printStackTrace();
-		} catch (UnknownHostException e) {
+		} catch (SocketException | UnknownHostException e) {
 			e.printStackTrace();
 		}
 	}
 
 	/**
 	 * This function implements the communication protocol with the MM.
-	 * <p>
+	 *
 	 * First of all, SlaveNode send a initial packet to the server. Server responds with the ID assigned to this SlaveNode.
 	 * Second, the slave node wait for establish the DB, with the partition assigned to it. The slave node responds with the status
 	 * of the process.
@@ -65,8 +58,6 @@ public class SNClient {
 						sendPacketToServer(new Msg(NetworkConstants.PCK_STATUS_KO_START_DB, null));
 					}
 
-					System.out.println("My prueba");
-
 					QueryExecutor.getInstace().processQuery("MATCH (n{id: 5}) RETURN n.name;");
 					break;
 
@@ -79,7 +70,7 @@ public class SNClient {
 					break;
 
 				case NetworkConstants.PCK_QUERY:
-					System.out.println("NEW QUERY RECEIVED");
+					System.out.println("-> New query received");
 					ResultQuery result = QueryExecutor.getInstace().processQuery(msgFromServer.getDataAsString());
 
 					sendPacketToServer(new Msg(NetworkConstants.PCK_QUERY_RESULT, result));
@@ -89,8 +80,10 @@ public class SNClient {
 		}
 	}
 
+	/**
+	 * This function connects the SN to the MM through the package with code 12.
+	 */
 	private void connectToServer() {
-
 		Msg msg = new Msg(12, "Hello");
 		sendPacketToServer(msg);
 
@@ -99,6 +92,10 @@ public class SNClient {
 		SlaveNode.getInstance().setId(Integer.valueOf(response.getDataAsString()));
 	}
 
+	/**
+	 * Wait response from the server.
+	 * @return the msg that que server, MM, sent to the SN.
+	 */
 	private Msg waitFromServer() {
 		Msg msg = null;
 		try {
@@ -110,8 +107,8 @@ public class SNClient {
 			ObjectInputStream ois = new ObjectInputStream(baos);
 
 			msg = (Msg) ois.readObject();
-			System.out.println("New Message!");
-			System.out.println("Code: " + msg.getCode() + "  Data: " + msg.getDataAsString());
+			System.out.println("->New Message!");
+			System.out.println("  Code: " + msg.getCode() + "  Data: " + msg.getDataAsString());
 
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
@@ -120,7 +117,10 @@ public class SNClient {
 		return msg;
 	}
 
-
+	/**
+	 * Send the message [msg] to the server MM.
+	 * @param msg structure with code and data that contains the information that want to be send.
+	 */
 	private void sendPacketToServer(Msg msg) {
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -130,7 +130,7 @@ public class SNClient {
 			oos.writeObject(msg);
 			byte[] data = baos.toByteArray();
 
-			dPacket = new DatagramPacket(data, data.length, ipAdress, MMPort);
+			DatagramPacket dPacket = new DatagramPacket(data, data.length, ipAdress, MMPort);
 			dSocket.send(dPacket);
 
 		} catch (IOException e) {

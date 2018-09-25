@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * Created by Carla Urrea Blázquez on 06/06/2018.
  *
- * QueryExecutor.java
+ * This class make possible the query execution in the instance that hosts the machine.
  */
 public class QueryExecutor {
 	private static QueryExecutor instance;
@@ -23,6 +23,11 @@ public class QueryExecutor {
 		graphDatabaseService = GraphDatabase.getInstance().getDataBaseGraphService();
 	}
 
+	/**
+	 * Base function, process query and execute it.
+	 * @param query string query to process.
+	 * @return the result of the query to be executed.
+	 */
 	public ResultQuery processQuery(String query) {
 		try (Transaction q = graphDatabaseService.beginTx();
 			 Result result = graphDatabaseService.execute(query)) {
@@ -36,8 +41,6 @@ public class QueryExecutor {
 
 				for (int i = 0; i < columnsCount; i++) {
 					Object o = next.get(resultQuery.getColumnsName().get(i));
-					System.out.println("-> Class o: " + o.getClass().toString());
-
 
 					if (o instanceof Node) {
 						Node node = (Node) o;
@@ -68,8 +71,6 @@ public class QueryExecutor {
 
 						resultRelation.setStartNodeId(relationship.getStartNodeId());
 						resultRelation.setEndNodeId(relationship.getEndNodeId());
-
-						System.out.println("Relation OK. Column: " + i);
 
 						resultQuery.addEntity(i, resultRelation);
 

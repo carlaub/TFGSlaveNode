@@ -7,8 +7,6 @@ import org.neo4j.unsafe.batchinsert.BatchInserter;
 /**
  * Created by Carla Urrea Blázquez on 04/05/2018.
  *
- * SlaveNode.java
- *
  * Singleton class that contains the basic information that the SlaveNode need during the execution
  */
 public class SlaveNode {
@@ -25,7 +23,7 @@ public class SlaveNode {
 		return instance;
 	}
 
-	public SlaveNode() {
+	private SlaveNode() {
 		this.id = -1;
 	}
 
@@ -45,7 +43,7 @@ public class SlaveNode {
 		this.id = id;
 	}
 
-	public BatchInserter getBatchInserter() {
+	private BatchInserter getBatchInserter() {
 		return batchInserter;
 	}
 
@@ -54,12 +52,11 @@ public class SlaveNode {
 	}
 
 	public void shutDownSlaveNode() {
-		// TODO: Disconnect Neo4j DB. Clean
 		//Clean Hadoop
-//		HadoopUtils.getInstance().closeResources();
+		HadoopUtils.getInstance().closeResources();
 		// Shutdown Neo4J BatchInserter
-		/*if (SlaveNode.getInstance().getBatchInserter() != null) {
+		if (SlaveNode.getInstance().getBatchInserter() != null) {
 			SlaveNode.getInstance().getBatchInserter().shutdown();
-		}*/
+		}
 	}
 }

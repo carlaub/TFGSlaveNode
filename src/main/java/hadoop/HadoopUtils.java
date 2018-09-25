@@ -10,13 +10,13 @@ import java.io.*;
 /**
  * Created by Carla Urrea Blázquez on 26/04/2018.
  *
- * HadoopUtils.java
+ * This class contains the methods and resources used for manage the Hadoop framework from the application.
  */
 public class HadoopUtils {
 	private static HadoopUtils instance;
 	private FileSystem fs;
 
-	public HadoopUtils() {
+	private HadoopUtils() {
 		configureHadoop();
 	}
 
@@ -28,6 +28,9 @@ public class HadoopUtils {
 		return instance;
 	}
 
+	/**
+	 * Configure the Hadoops parameters according to the requirements of this project.
+	 */
 	private void configureHadoop() {
 		Configuration configuration = new Configuration();
 		//Required by Maven
@@ -48,7 +51,7 @@ public class HadoopUtils {
 	 *
 	 * @param filePath Complete file's path/url into HDFS with
 	 *                 Ex format: hdfs://node1-master:9000/user/hadoop/people.txt
-	 * @return
+	 * @return the BufferedReader.
 	 */
 	public BufferedReader getBufferReaderHFDSFile(String filePath) {
 		Path path = new Path(filePath);
@@ -63,6 +66,9 @@ public class HadoopUtils {
 		return null;
 	}
 
+	/**
+	 * This function manage the resources to close when the system shuts down.
+	 */
 	public void closeResources() {
 		 try {
 			 if (fs != null) fs.close();

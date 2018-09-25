@@ -9,8 +9,6 @@ import java.io.File;
 /**
  * Created by Carla Urrea Blázquez on 29/05/2018.
  *
- * GraphDatabase.java
- *
  * Contains the instance of Neo4j Graph Database Service.
  */
 public class GraphDatabase {

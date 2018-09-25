@@ -5,7 +5,7 @@ package model;
  *
  * SNInformation.java
  *
- * Slave node configuration information
+ * Slave node configuration information,
  */
 public class SNInformation {
 	private String MMIp;

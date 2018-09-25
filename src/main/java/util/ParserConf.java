@@ -10,13 +10,10 @@ import java.io.IOException;
 /**
  * Created by Carla Urrea Blázquez on 04/05/2018.
  *
- * ParserConf.java
- *
  * This class is a parser for the config file of the MetadataManager
  *
  * The config file format:
  *	-> MetadataManager IP
- *
  */
 public class ParserConf {
 	private BufferedReader brConfigFile;
@@ -57,5 +54,4 @@ public class ParserConf {
 		System.out.println("FS default: " + snInformation.getDefaultFS());
 		System.out.println("Working directory: " + snInformation.getHDFSWorkingDirectory());
 	}
-
 }

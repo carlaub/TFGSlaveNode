@@ -16,20 +16,22 @@ import java.util.Map;
 /**
  * Created by Carla Urrea Blázquez on 08/05/2018.
  *
- * Neo4JImport.java
  *
  * This class contains the methods needed for import the graph partition into Neo4J.
  * The finality is interpret the partition files stored in HDFS, parse it and create the Neo4J DB for this partition
  */
 public class Neo4JImport {
 	private GraphDatabaseService graphDb;
-	Map<Integer, Node> nodeCache;
+	private Map<Integer, Node> nodeCache;
 
 
 	public Neo4JImport() {
 		nodeCache = new HashMap<>();
 	}
 
+	/**
+	 * Start the import from the Hadoop partition's files to the instance hosted in the machine.
+	 */
 	public boolean startPartitionDBImport() {
 		// Init Neo4j batchinserter
 		if (!initBatchInserter()) {
@@ -70,8 +72,7 @@ public class Neo4JImport {
 	/**
 	 * Node line format:
 	 * [id	labelsNum	label1	labelN	Attribute1Name	Attribute1Value	AttributeNName	AttributeNValue]
-	 * @param line
-	 * @return
+	 * @param line that contains the node's information.
 	 */
 	private void createNode(String line) {
 		int labelsNum;
@@ -81,10 +82,6 @@ public class Neo4JImport {
 
 		String[] parts = line.split("\t");
 
-		// DEBUG
-		for(String part : parts) {
-			System.out.println("PART: " + part);
-		}
 
 		int totalParts = parts.length;
 
@@ -102,7 +99,6 @@ public class Neo4JImport {
 			index++;
 		}
 
-		// TODO: CAMBIAR ID, UTILIZAR INDEX MANAGER  index() (https://neo4j.com/docs/java-reference/current/javadocs/org/neo4j/graphdb/GraphDatabaseService.html#createNode--)
 		// Attributes processing
 		String property;
 		String value;
@@ -133,13 +129,16 @@ public class Neo4JImport {
 		}
 	}
 
+	/**
+	 * Analyze and process the node's file.
+	 * @return true if the file has been processed successfully.
+	 */
 	private boolean processNodesPartitionFile() {
 		String line;
 		BufferedReader br = HadoopUtils.getInstance().getBufferReaderHFDSFile(SlaveNode.getInstance().getSNInformation().getHDFSWorkingDirectory() + GenericConstants.FILE_NAME_NODES_PARTITION_BASE + SlaveNode.getInstance().getId() + ".txt");
 
 		if (br == null) return false;
 
-		System.out.println(MsgConstants.MSG_READING_FILE+": " + GenericConstants.FILE_NAME_NODES_PARTITION_BASE + SlaveNode.getInstance().getId() + "\n\n");
 		try {
 			while((line = br.readLine()) != null) {
 				System.out.println(line);
@@ -154,6 +153,10 @@ public class Neo4JImport {
 		return true;
 	}
 
+	/**
+	 * This function creates a new relation inside the Neo4j's instance.
+	 * @param line string that represents the relation information in the Hadoop's file format.
+	 */
 	private void createRelation(String line) {
 		int fromNode;
 		int toNode;
@@ -189,13 +192,16 @@ public class Neo4JImport {
 		}
 	}
 
+	/**
+	 * Analyze and process the edges's file.
+	 * @return true if the file has been processed successfully.
+	 */
 	private boolean processEdgesPartitionFile() {
 		String line;
 		BufferedReader br = HadoopUtils.getInstance().getBufferReaderHFDSFile(SlaveNode.getInstance().getSNInformation().getHDFSWorkingDirectory() + GenericConstants.FILE_NAME_EDGES_PARTITION_BASE + SlaveNode.getInstance().getId() + ".txt");
 
 		if (br == null) return false;
 
-		System.out.println("READING FILE: " + GenericConstants.FILE_NAME_EDGES_PARTITION_BASE + SlaveNode.getInstance().getId() + "\n\n");
 		try {
 			while((line = br.readLine()) != null) {
 				System.out.println(line);

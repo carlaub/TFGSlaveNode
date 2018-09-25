@@ -8,15 +8,16 @@ import java.util.List;
 /**
  * Created by Carla Urrea Blázquez on 09/07/2018.
  *
+ * This class the results set from a query.
  */
 
 public class ResultQuery implements Serializable{
-	List<String> columnsName;
-	int columnsCount;
-	List<List<ResultEntity>> dataList;
-	int maxRowCount;
+	private List<String> columnsName;
+	private int columnsCount;
+	private List<List<ResultEntity>> dataList;
+	private int maxRowCount;
 
-	public ResultQuery(List<String> columnsName) {
+	ResultQuery(List<String> columnsName) {
 		this.columnsCount = columnsName.size();
 		this.maxRowCount = 0;
 
@@ -38,7 +39,7 @@ public class ResultQuery implements Serializable{
 	}
 
 
-	public List<String> getColumnsName() {
+	List<String> getColumnsName() {
 		return columnsName;
 	}
 
@@ -61,7 +62,7 @@ public class ResultQuery implements Serializable{
 	}
 
 
-	public void addEntity(int columnIndex, ResultEntity entity) {
+	void addEntity(int columnIndex, ResultEntity entity) {
 		List<ResultEntity> column = dataList.get(columnIndex);
 		column.add(entity);
 
