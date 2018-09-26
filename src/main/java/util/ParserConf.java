@@ -52,6 +52,6 @@ public class ParserConf {
 	private void printConfigurationInformation(SNInformation snInformation) {
 		System.out.println("MetadataManager IP: " + snInformation.getMMIp());
 		System.out.println("FS default: " + snInformation.getDefaultFS());
-		System.out.println("Working directory: " + snInformation.getHDFSWorkingDirectory());
+		System.out.println("Working directory: " + snInformation.getHDFSWorkingDirectory() + "\n\n");
 	}
 }

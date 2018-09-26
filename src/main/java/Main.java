@@ -13,7 +13,7 @@ import java.io.IOException;
  */
 public class Main {
 	public static void main(String[] args) {
-		System.out.println("/************* SLAVE NODE *************/\n\n");
+		System.out.println("/************* SLAVE NODE *************/\n");
 
 		// Create application singleton object
 		SlaveNode slaveNode = SlaveNode.getInstance();

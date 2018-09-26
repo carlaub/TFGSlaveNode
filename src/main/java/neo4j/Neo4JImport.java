@@ -41,7 +41,7 @@ public class Neo4JImport {
 		// Reset the Data Base information (Delete all nodes and relations)
 		try ( Transaction tx = graphDb.beginTx() ) {
 			graphDb.execute("MATCH (n) DETACH DELETE n");
-			System.out.println("-> DB Reset done");
+			System.out.println("-> DB Reset done\n");
 			tx.success();
 		}
 

@@ -107,8 +107,8 @@ public class SNClient {
 			ObjectInputStream ois = new ObjectInputStream(baos);
 
 			msg = (Msg) ois.readObject();
-			System.out.println("->New Message!");
-			System.out.println("  Code: " + msg.getCode() + "  Data: " + msg.getDataAsString());
+			System.out.println("-> New Message - ");
+			System.out.println("	Code: " + msg.getCode() + "  Data: " + msg.getDataAsString()+"\n");
 
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();

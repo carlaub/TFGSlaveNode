@@ -17,7 +17,7 @@ public class ResultQuery implements Serializable{
 	private List<List<ResultEntity>> dataList;
 	private int maxRowCount;
 
-	ResultQuery(List<String> columnsName) {
+	public ResultQuery(List<String> columnsName) {
 		this.columnsCount = columnsName.size();
 		this.maxRowCount = 0;
 
@@ -39,7 +39,7 @@ public class ResultQuery implements Serializable{
 	}
 
 
-	List<String> getColumnsName() {
+	public List<String> getColumnsName() {
 		return columnsName;
 	}
 
@@ -61,14 +61,22 @@ public class ResultQuery implements Serializable{
 		return null;
 	}
 
-
-	void addEntity(int columnIndex, ResultEntity entity) {
+	/**
+	 * Add new entity to the result.
+	 * @param columnIndex index of the column (variable) where the entity will be inserted.
+	 * @param entity the entity to be inserted.
+	 */
+	public void addEntity(int columnIndex, ResultEntity entity) {
 		List<ResultEntity> column = dataList.get(columnIndex);
 		column.add(entity);
 
 		if (column.size() > maxRowCount) maxRowCount = column.size();
 	}
 
+	/**
+	 * Remove the las entity of a column.
+	 * @param columnIndex index of the column.
+	 */
 	public void removeLast(int columnIndex) {
 		List<ResultEntity> column = dataList.get(columnIndex);
 		if (column.size() > 0) {
@@ -76,6 +84,10 @@ public class ResultQuery implements Serializable{
 		}
 	}
 
+	/**
+	 * Transforms the ResultQuery into a Table. This table is used to print the results clearly.
+	 * @return a table with the ResultQuery's information.
+	 */
 	public Object[][] getDataTable() {
 		if (dataList == null || dataList.size() == 0) return null;
 

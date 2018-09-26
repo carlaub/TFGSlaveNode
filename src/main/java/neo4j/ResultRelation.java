@@ -25,7 +25,7 @@ public class ResultRelation extends ResultEntity {
 		properties.put(propertyKey, value);
 	}
 
-	private HashMap<String, Object> getProperties() {
+	public HashMap<String, Object> getProperties() {
 		return properties;
 	}
 
@@ -61,7 +61,7 @@ public class ResultRelation extends ResultEntity {
 			strBuilder.append(",");
 		}
 
-		strBuilder.replace(strBuilder.length() - 2, strBuilder.length(), "]");
+		strBuilder.replace(strBuilder.length() - 1, strBuilder.length(), "]");
 
 		return strBuilder.toString();
 	}
